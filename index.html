@@ -7,26 +7,36 @@
 </head>
 <body>
     <main>
+<!--
     <a href="http://www.nctu.edu.tw/images/vicepresidentoffice-liny.jpg">
         <img src="http://www.nctu.edu.tw/images/vicepresidentoffice-liny.jpg">
     </a>
     <br>
-    <!--<embed src="https://google-translate-proxy.herokuapp.com/api/tts?query=感嘆西父讚嘆西父&amp;language=zh-tw" autostart=true hidden="0">-->
+    <embed src="https://google-translate-proxy.herokuapp.com/api/tts?query=感嘆西父讚嘆西父&amp;language=zh-tw" autostart=true hidden="0">
     <audio id="myVideo" controls hidden = ture>
         <source src="https://google-translate-proxy.herokuapp.com/api/tts?query=感嘆西父讚嘆西父&amp;language=zh-tw" type="audio/ogg">
         <source src="https://google-translate-proxy.herokuapp.com/api/tts?query=感嘆西父讚嘆西父&amp;language=zh-tw" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
     <br>
+    -->
     <button onclick="play_sound()" type="button">play</button>
     
     <script>
+
     var vid = document.getElementById("myVideo");
     function play_sound() { 
        vid.play();
     }
+   
+    var u = new SpeechSynthesisUtterance("持續檢討 積極改進 上緊發條 全力以赴");
+    u.lang = "zh-TW" // So system knows the right voice to use
+
+    window.speechSynthesis.speak(u);
     </script>
-    
+
+
+
     </main>
 </body>
 </html>
