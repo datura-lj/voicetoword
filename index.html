@@ -1,16 +1,24 @@
+<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" /></head>
 <body>
 <script type="text/javascript">
-var infoBox; // 訊息 label
+
+//for voice to word
+var infoBox = document.getElementById("infoBox"); // 訊息 label
 var textBox; // 最終的辨識訊息 text input
 var tempBox; // 中間的辨識訊息 text input
 var startStopButton; // 「辨識/停止」按鈕
 var final_transcript = ''; // 最終的辨識訊息的變數
 var recognizing = false; // 是否辨識中
 
+//for word to speak
+var Speak = new SpeechSynthesisUtterance("");
+Speak.lang = "zh-TW" // So system knows the right voice to use
+
+
 function startButton(event) {
-    infoBox = document.getElementById("infoBox"); // 取得訊息控制項 infoBox
+    //infoBox = document.getElementById("infoBox"); // 取得訊息控制項 infoBox
     textBox = document.getElementById("textBox"); // 取得最終的辨識訊息控制項 textBox
     tempBox = document.getElementById("tempBox"); // 取得中間的辨識訊息控制項 tempBox
     startStopButton = document.getElementById("startStopButton"); // 取得「辨識/停止」這個按鈕控制項
@@ -36,13 +44,13 @@ if (!('webkitSpeechRecognition' in window)) {  // 如果找不到 window.webkitS
     
     recognition.onstart = function() { // 開始辨識
         recognizing = true; // 設定為辨識中
-        startStopButton.value = "按此停止"; // 辨識中...按鈕改為「按此停止」。  
+        startStopButton.innerText = "按此停止"; // 辨識中...按鈕改為「按此停止」。  
         infoBox.innerText = "辨識中...";  // 顯示訊息為「辨識中」...
     };
 
     recognition.onend = function() { // 辨識完成
         recognizing = false; // 設定為「非辨識中」
-        startStopButton.value = "開始辨識";  // 辨識完成...按鈕改為「開始辨識」。
+        startStopButton.innerText = "開始辨識";  // 辨識完成...按鈕改為「開始辨識」。
         infoBox.innerText = ""; // 不顯示訊息
     };
 
@@ -56,23 +64,28 @@ if (!('webkitSpeechRecognition' in window)) {  // 如果找不到 window.webkitS
             }
         }
 
-        if (final_transcript.trim().length > 0) // 如果有最終辨識文字
+        if (final_transcript.trim().length > 0){ // 如果有最終辨識文字
             textBox.value = final_transcript; // 顯示最終辨識文字
+            Speak.text=final_transcript;
+            window.speechSynthesis.speak(Speak);
+        }
         if (interim_transcript.trim().length > 0) // 如果有中間辨識文字
             tempBox.value = interim_transcript; // 顯示中間辨識文字
     };
 }
 </script>
 
-<BR/>
-最後結果：<input id="textBox" type="text" size="60" value=""/><BR/>
-中間結果：<input id="tempBox" type="text" size="60" value=""/><BR/>
+<br>
+最後結果：<input id="textBox" type="text" size="60" value=""/><br>
+中間結果：<input id="tempBox" type="text" size="60" value=""/><br>
 辨識語言：
 <select id="langCombo">
-    <option value="en-US">英文(美國)</option>
     <option value="cmn-Hant-TW">中文(台灣)</option>
-</select>
-<input id="startStopButton" type="button" value="辨識" onclick="startButton(event)"/><BR/>
+    <option value="en-US">英文(美國)</option>
+</select><br>
+<button id="startStopButton" type="button"  value='' style="width:100px;height:50px;font-size:20px" onclick="startButton(event)"/>
+開始辨識
+</button><br>
 <label id="infoBox"></label>
 
 </body>
