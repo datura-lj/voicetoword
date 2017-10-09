@@ -2,38 +2,34 @@
 <html>
 <head><meta charset="utf-8" /></head>
 <body>
-<script type="text/javascript">
+<br>
+最後結果：<input id="textBox" type="text" size="60" value=""/><br>
+中間結果：<input id="tempBox" type="text" size="60" value=""/><br>
+辨識語言：
+<select id="langCombo">
+    <option value="cmn-Hant-TW">中文(台灣)</option>
+    <option value="en-US">英文(美國)</option>
+</select><br>
+<button id="startStopButton" type="button"  value='' style="width:100px;height:50px;font-size:20px" onclick="startButton(event)"/>
+開始辨識
+</button><br>
+<label id="infoBox"></label>
 
-//for voice to word
-var infoBox ;//= document.getElementById("infoBox"); // 訊息 label
-var textBox ;//= document.getElementById("textBox"); // 最終的辨識訊息 text input
-var tempBox ;//= document.getElementById("tempBox"); // 中間的辨識訊息 text input
-var startStopButton; // 「辨識/停止」按鈕
+
+<script type="text/javascript">
+/*for voice to word*/
+var infoBox         = document.getElementById("infoBox");         // 訊息 label
+var textBox         = document.getElementById("textBox");         // 最終的辨識訊息 text input
+var tempBox         = document.getElementById("tempBox");         // 中間的辨識訊息 text input
+var startStopButton = document.getElementById("startStopButton"); // 「辨識/停止」按鈕
+var langCombo       = document.getElementById("langCombo");// 取得「辨識語言」這個選擇控制項
 var final_transcript = ''; // 最終的辨識訊息的變數
 var recognizing = false; // 是否辨識中
 
-//for word to speak
+/*for word to speak*/
 var Speak = new SpeechSynthesisUtterance("");
 Speak.lang = "zh-TW" // So system knows the right voice to use
 
-
-function startButton(event) {
-    infoBox = document.getElementById("infoBox"); // 取得訊息控制項 infoBox
-    textBox = document.getElementById("textBox"); // 取得最終的辨識訊息控制項 textBox
-    tempBox = document.getElementById("tempBox"); // 取得中間的辨識訊息控制項 tempBox
-    startStopButton = document.getElementById("startStopButton"); // 取得「辨識/停止」這個按鈕控制項
-    langCombo = document.getElementById("langCombo"); // 取得「辨識語言」這個選擇控制項
-    if (recognizing) { // 如果正在辨識，則停止。
-        recognition.stop();
-    } else { // 否則就開始辨識
-        textBox.value = ''; // 清除最終的辨識訊息
-        tempBox.value = ''; // 清除中間的辨識訊息
-        final_transcript = ''; // 最終的辨識訊息變數
-        recognition.lang = langCombo.value; // 設定辨識語言
-        recognition.start(); // 開始辨識
-    }
-}
-                                        
 if (!('webkitSpeechRecognition' in window)) {  // 如果找不到 window.webkitSpeechRecognition 這個屬性
     // 就是不支援語音辨識，要求使用者更新瀏覽器。 
     infoBox.innerHTML = "本瀏覽器不支援語音辨識，請更換瀏覽器！(Chrome 25 版以上才支援語音辨識)";
@@ -73,20 +69,22 @@ if (!('webkitSpeechRecognition' in window)) {  // 如果找不到 window.webkitS
             tempBox.value = interim_transcript; // 顯示中間辨識文字
     };
 }
+
+function startButton(event) {
+    if (recognizing) { // 如果正在辨識，則停止。
+        recognition.stop();
+    } else { // 否則就開始辨識
+        textBox.value = ''; // 清除最終的辨識訊息
+        tempBox.value = ''; // 清除中間的辨識訊息
+        final_transcript = ''; // 最終的辨識訊息變數
+        recognition.lang = langCombo.value; // 設定辨識語言
+        recognition.start(); // 開始辨識
+    }
+}
+
+
 </script>
 
-<br>
-最後結果：<input id="textBox" type="text" size="60" value=""/><br>
-中間結果：<input id="tempBox" type="text" size="60" value=""/><br>
-辨識語言：
-<select id="langCombo">
-    <option value="cmn-Hant-TW">中文(台灣)</option>
-    <option value="en-US">英文(美國)</option>
-</select><br>
-<button id="startStopButton" type="button"  value='' style="width:100px;height:50px;font-size:20px" onclick="startButton(event)"/>
-開始辨識
-</button><br>
-<label id="infoBox"></label>
 
 </body>
 </html>
