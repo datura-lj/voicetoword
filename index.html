@@ -5,9 +5,9 @@
 <script type="text/javascript">
 
 //for voice to word
-var infoBox = document.getElementById("infoBox"); // 訊息 label
-var textBox; // 最終的辨識訊息 text input
-var tempBox; // 中間的辨識訊息 text input
+var infoBox ;//= document.getElementById("infoBox"); // 訊息 label
+var textBox ;//= document.getElementById("textBox"); // 最終的辨識訊息 text input
+var tempBox ;//= document.getElementById("tempBox"); // 中間的辨識訊息 text input
 var startStopButton; // 「辨識/停止」按鈕
 var final_transcript = ''; // 最終的辨識訊息的變數
 var recognizing = false; // 是否辨識中
@@ -18,7 +18,7 @@ Speak.lang = "zh-TW" // So system knows the right voice to use
 
 
 function startButton(event) {
-    //infoBox = document.getElementById("infoBox"); // 取得訊息控制項 infoBox
+    infoBox = document.getElementById("infoBox"); // 取得訊息控制項 infoBox
     textBox = document.getElementById("textBox"); // 取得最終的辨識訊息控制項 textBox
     tempBox = document.getElementById("tempBox"); // 取得中間的辨識訊息控制項 tempBox
     startStopButton = document.getElementById("startStopButton"); // 取得「辨識/停止」這個按鈕控制項
@@ -36,7 +36,7 @@ function startButton(event) {
                                         
 if (!('webkitSpeechRecognition' in window)) {  // 如果找不到 window.webkitSpeechRecognition 這個屬性
     // 就是不支援語音辨識，要求使用者更新瀏覽器。 
-    infoBox.innerText = "本瀏覽器不支援語音辨識，請更換瀏覽器！(Chrome 25 版以上才支援語音辨識)";
+    infoBox.innerHTML = "本瀏覽器不支援語音辨識，請更換瀏覽器！(Chrome 25 版以上才支援語音辨識)";
 } else {
     var recognition = new webkitSpeechRecognition(); // 建立語音辨識物件 webkitSpeechRecognition
     recognition.continuous = true; // 設定連續辨識模式
@@ -45,13 +45,13 @@ if (!('webkitSpeechRecognition' in window)) {  // 如果找不到 window.webkitS
     recognition.onstart = function() { // 開始辨識
         recognizing = true; // 設定為辨識中
         startStopButton.innerText = "按此停止"; // 辨識中...按鈕改為「按此停止」。  
-        infoBox.innerText = "辨識中...";  // 顯示訊息為「辨識中」...
+        infoBox.innerHTML = "辨識中...";  // 顯示訊息為「辨識中」...
     };
 
     recognition.onend = function() { // 辨識完成
         recognizing = false; // 設定為「非辨識中」
         startStopButton.innerText = "開始辨識";  // 辨識完成...按鈕改為「開始辨識」。
-        infoBox.innerText = ""; // 不顯示訊息
+        infoBox.innerHTML = ""; // 不顯示訊息
     };
 
     recognition.onresult = function(event) { // 辨識有任何結果時
