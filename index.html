@@ -13,6 +13,8 @@
 <button id="startStopButton" type="button"  value='' style="width:100px;height:50px;font-size:20px" onclick="startButton(event)"/>
 開始辨識
 </button><br>
+<label id="infoBox"></label><br>
+
 
 
 <script type="text/javascript">
@@ -24,6 +26,7 @@ var startStopButton = document.getElementById("startStopButton"); // 「辨識/�
 var langCombo       = document.getElementById("langCombo");// 取得「辨識語言」這個選擇控制項
 var final_transcript = ''; // 最終的辨識訊息的變數
 var recognizing = false; // 是否辨識中
+
 
 /*for word to speak*/
 var Speak = new SpeechSynthesisUtterance("");
@@ -55,13 +58,19 @@ if (!('webkitSpeechRecognition' in window)) {  // 如果找不到 window.webkitS
             
             if (event.results[i].isFinal) { // 如果是最終結果
                 final_transcript += event.results[i][0].transcript; // 將其加入最終結果中
+                console.log('final tran add');
+
             } else { // 否則
                 interim_transcript += event.results[i][0].transcript; // 將其加入中間結果中
+                console.log('inter tran add');
             }
         }
 
-        if (final_transcript.trim().length > 0) // 如果有最終辨識文字
+        if (final_transcript.trim().length > 0){ // 如果有最終辨識文字
             textBox.value = final_transcript; // 顯示最終辨識文字
+            play_sound();
+            final_transcript = '';
+        }
 
         if (interim_transcript.trim().length > 0) // 如果有中間辨識文字
             tempBox.value = interim_transcript; // 顯示中間辨識文字
@@ -72,7 +81,8 @@ function startButton(event) {
     if (recognizing) { // 如果正在辨識，則停止。
         recognition.stop();
         Speak.text=final_transcript;
-        window.speechSynthesis.speak(Speak);
+        //window.speechSynthesis.speak(Speak);
+        //play_sound();
     } else { // 否則就開始辨識
         textBox.value = ''; // 清除最終的辨識訊息
         tempBox.value = ''; // 清除中間的辨識訊息
@@ -82,6 +92,13 @@ function startButton(event) {
     }
 }
 
+function play_sound() { 
+    var url  = "https://google-translate-proxy.herokuapp.com/api/tts?query="+final_transcript+"&language=zh-tw" ;
+    let audio = new Audio(url);
+    audio.load();
+    audio.play();
+    
+}
 </script>
 </body>
 </html>
