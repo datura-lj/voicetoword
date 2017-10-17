@@ -2,119 +2,126 @@
 <html>
 <head><meta charset="utf-8" /></head>
 <body>
-最後結果：<input id="textBox" type="text" size="60" value=""/><br>
-中間結果：<input id="tempBox" type="text" size="60" value=""/><br>
+最後結果：<input id="textBox" type="text" size="60" value=""><br>
+中間結果：<input id="tempBox" type="text" size="60" value=""><br>
 辨識語言：
 <select id="langCombo">
     <option value="cmn-Hant-TW">中文(台灣)</option>
     <option value="en-US">英文(美國)</option>
 </select><br>
 
-<button id="startStopButton" type="button"  value='' style="width:100px;height:50px;font-size:20px" onclick="startButton(event)"/>
+<button id="startStopButton" type="button" style="width:100px;height:50px;font-size:20px" onclick="startButton()"/>
 開始辨識
 </button><br>
 <label id="infoBox"></label><br>
 
-Input: <input type="text" id ="keyin "><br>
-<input type ="submit" value = "Submit">
 
-
-<button id type="button" style="width:100px;height:50px;font-size:20px" onclick="play_sound()" />
-play sound
-</button>
-
-<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="jquery-3.1.1.min.js"></script>
 <script type="text/javascript">
 /*for voice to word*/
-var infoBox         = $('.infoBox') ;  //document.getElementById("infoBox"); //$('.infoBox')         // 訊息 label
-var textBox         = $('textBox');         // 最終的辨識訊息 text input
-var tempBox         = $('tempBox');         // 中間的辨識訊息 text input
-var startStopButton = $('startStopButton'); // 「辨識/停止」按鈕
-var langCombo       = $('langCombo');// 取得「辨識語言」這個選擇控制項
+//var infoBox         = $("#infoBox");  //document.getElementById("infoBox"); //$('.infoBox')         // 訊息 label
+//var textBox         = $("#textBox");         // 最終的辨識訊息 text input
+//var tempBox         = $("#tempBox");         // 中間的辨識訊息 text input
+//var startStopButton = $("#startStopButton"); // 「辨識/停止」按鈕
+//var langCombo       = $("#langCombo");// 取得「辨識語言」這個選擇控制項
 
-var final_transcript = '現在還沒辨識出任何文字'; // 最終的辨識訊息的變數
+var final_transcript = ''; // 最終的辨識訊息的變數
 var recognizing = false; // 是否辨識中
-
 
 /*for word to speak*/
 var Speak = new SpeechSynthesisUtterance("");
 Speak.lang = "zh-TW" // So system knows the right voice to use
+var manual_conti = false;
 
 if (!('webkitSpeechRecognition' in window)) {  // 如果找不到 window.webkitSpeechRecognition 這個屬性
     // 就是不支援語音辨識，要求使用者更新瀏覽器。 
-    infoBox.innerHTML = "本瀏覽器不支援語音辨識，請更換瀏覽器！(Chrome 25 版以上才支援語音辨識)";
+    $('#infoBox').innerHTML = "本瀏覽器不支援語音辨識，請更換瀏覽器！(Chrome 25 版以上才支援語音辨識)";
 } else {
     var recognition = new webkitSpeechRecognition(); // 建立語音辨識物件 webkitSpeechRecognition
-    recognition.continuous = true; // 設定連續辨識模式
+    //recognition.continuous = true; // 設定連續辨識模式
     recognition.interimResults = true; // 設定輸出中先結果。
     
     recognition.onstart = function() { // 開始辨識
         recognizing = true; // 設定為辨識中
-        startStopButton.innerHTML = "按此停止"; // 辨識中...按鈕改為「按此停止」。  
-        infoBox.innerHTML = "辨識中...";  // 顯示訊息為「辨識中」...
+        console.log('start');
+        $('#startStopButton').html( "按此停止"); // 辨識中...按鈕改為「按此停止」。  
+        $('#infoBox').html("辨識中...");  // 顯示訊息為「辨識中」...
     };
 
     recognition.onend = function() { // 辨識完成
         recognizing = false; // 設定為「非辨識中」
-        startStopButton.innerHTML = "開始辨識";  // 辨識完成...按鈕改為「開始辨識」。
-        infoBox.innerHTML = "recognition onend"; // 不顯示訊息
-        play_sound();
-        
+        console.log('end');
+        $('#startStopButton').html( "開始辨識");  // 辨識完成...按鈕改為「開始辨識」。
+        $('#infoBox').html("");
+        if(!manual_conti)
+            recognition.start();
     };
 
     recognition.onresult = function(event) { // 辨識有任何結果時
+        console.log('result');
         var interim_transcript = ''; // 中間結果
-        for (var i = event.resultIndex; i < event.results.length; ++i) { // 對於每一個辨識結果
-            
+        //for (var i = event.resultIndex; i < event.results.length; ++i) { // 對於每一個辨識結果
+            i = event.resultIndex;
+            console.log(i,event.results[i].isFinal ,event.results[i][0].transcript);
             if (event.results[i].isFinal) { // 如果是最終結果
-                final_transcript += event.results[i][0].transcript; // 將其加入最終結果中
-                console.log('final tran add');
-                infoBox.innerHTML = "final tran add";
-
+                final_transcript   += event.results[i][0].transcript; // 將其加入最終結果中
             } else { // 否則
                 interim_transcript += event.results[i][0].transcript; // 將其加入中間結果中
-                console.log('inter tran add');
-                infoBox.innerHTML = "inter tran add";
             }
-        }
+        //}
 
         if (final_transcript.trim().length > 0){ // 如果有最終辨識文字
-            textBox.value = final_transcript; // 顯示最終辨識文字
-            play_sound();
-            final_transcript = '';
+            $('#textBox').val(final_transcript); // 顯示最終辨識文字
+            //console.log("final_transcript:"+final_transcript);
         }
-
         if (interim_transcript.trim().length > 0) // 如果有中間辨識文字
-            tempBox.value = interim_transcript; // 顯示中間辨識文字
+            $('#tempBox').val(interim_transcript); // 顯示中間辨識文字
     };
 }
 
-function startButton(event) {
+function startButton() {
+    var url  = "https://google-translate-proxy.herokuapp.com/api/tts?query="+final_transcript+"&language=zh-tw" ;
+    let audio = new Audio(url);
+    audio.addEventListener("canplaythrough",function(){audio.play();});
+    
     if (recognizing) { // 如果正在辨識，則停止。
+        wordtourl(final_transcript);
         recognition.stop();
+        manual_conti = true;
         //Speak.text=final_transcript;
         //window.speechSynthesis.speak(Speak);
-        //play_sound();
-    } else { // 否則就開始辨識
-        textBox.value = ''; // 清除最終的辨識訊息
-        tempBox.value = ''; // 清除中間的辨識訊息
+    } 
+    else { // 否則就開始辨識
+        manual_conti = false;
+        $('#textBox').val(); // 清除最終的辨識訊息
+        $('#tempBox').val(); // 清除中間的辨識訊息
         final_transcript = ''; // 最終的辨識訊息變數
         recognition.lang = langCombo.value; // 設定辨識語言
         recognition.start(); // 開始辨識
-        infoBox.innerHTML = "準備開始辨識"
     }
 }
 
-function play_sound() { 
-    var url  = "https://google-translate-proxy.herokuapp.com/api/tts?query="+final_transcript+"&language=zh-tw" ;
-    let audio = new Audio(url);
-    audio.load();
-    audio.play();
+function wordtourl(final) { 
+    var url  = "https://google-translate-proxy.herokuapp.com/api/tts?query="+final+"&language=zh-tw" ;
+    console.log("final:"+final);
+    console.log("url:"+url);
+
+    /* attempt 1:fail */
+    //let audio = new Audio(url);
+    //audio.load();
+    //audio.play();
     
+    /* attempt 2:fail */
+    let audio = new Audio(url);
+    audio.addEventListener("canplaythrough",function(){audio.play();});
+    
+    /* attempt 3:fail */
+    //var xhr = new XMLHttpRequest();
+    //xhr.open('GET', url, false);
+
 }
-function test(){
-    final_transcript = window.
-}
+    
+
 
 </script>
 </body>
