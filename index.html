@@ -80,16 +80,16 @@ if (!('webkitSpeechRecognition' in window)) {  // 如果找不到 window.webkitS
 }
 
 function startButton() {
-    var url  = "https://google-translate-proxy.herokuapp.com/api/tts?query="+final_transcript+"&language=zh-tw" ;
-    let audio = new Audio(url);
-    audio.addEventListener("canplaythrough",function(){audio.play();});
+    //var url  = "https://google-translate-proxy.herokuapp.com/api/tts?query="+final_transcript+"&language=zh-tw" ;
+    //let audio = new Audio(url);
+    //audio.addEventListener("canplaythrough",function(){audio.play();});
     
     if (recognizing) { // 如果正在辨識，則停止。
-        wordtourl(final_transcript);
+        //wordtourl(final_transcript);
+        Speak.text=final_transcript;
+        window.speechSynthesis.speak(Speak);
         recognition.stop();
         manual_conti = true;
-        //Speak.text=final_transcript;
-        //window.speechSynthesis.speak(Speak);
     } 
     else { // 否則就開始辨識
         manual_conti = false;
@@ -102,9 +102,9 @@ function startButton() {
 }
 
 function wordtourl(final) { 
-    var url  = "https://google-translate-proxy.herokuapp.com/api/tts?query="+final+"&language=zh-tw" ;
-    console.log("final:"+final);
-    console.log("url:"+url);
+    //var url  = "https://google-translate-proxy.herokuapp.com/api/tts?query="+final+"&language=zh-tw" ;
+    //console.log("final:"+final);
+    //console.log("url:"+url);
 
     /* attempt 1:fail */
     //let audio = new Audio(url);
